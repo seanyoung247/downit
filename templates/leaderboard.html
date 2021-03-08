@@ -1,5 +1,22 @@
 {% extends "base.html" %}
 
+{% macro ordanlise(number) %}
+  {% set suffix = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'] %}
+  {# Make sure number isn't negative #}
+  {% if number < 0 %}
+    {% set number = number * -1 %}
+  {% endif %}
+  {% set number = number|int %}
+
+  {# Does this number end in a teen? #}
+  {% if number % 100 > 9 and number % 100 < 20 %}
+    {{ number ~ "th"}}
+  {% else %}
+    {{ number ~ suffix[(number % 10)] }}
+  {% endif %}
+
+{% endmacro %}
+
 {% block styles %}
   <link href="https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
@@ -15,8 +32,9 @@
     {% if player %}
     <p>
       Looks like you've had enough <span class="player-name">{{ player.name }}</span>.
-      You downed over {{ (player.score / 5)|int }} pints. That puts you in
-      {{ player.place }} overall.
+      You downed {{ (player.score / 5)|int }}
+      {{ 'pints' if ((player.score / 5)|int != 1) else 'pint' }}.
+      That puts you in {{ ordanlise(player.place) }} place overall.
     </p>
     <p>
       Take a look where you are on the leaderboard on the way out of my pub...
