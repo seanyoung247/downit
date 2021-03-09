@@ -116,10 +116,6 @@ main {
   display: inline-block;
   margin: auto;
 }
-#time_selectors > div {
-  float: left;
-  padding: 1px 5px;
-}
 .time-selector {
   float: left;
   cursor: pointer;
@@ -134,6 +130,7 @@ main {
   color: #AAAAAA;
   background-color: #666666;
   border: 1px solid rgba(0,0,0,0.2);
+  padding: 1px 5px;
 }
 .time-selector input[type = "radio"]:checked + div {
   color: #f8f8f8;
@@ -322,20 +319,50 @@ main {
   color: #f8f8f8;
   background-color: #FF7900;
 }
+#board_selectors {
+  width: 80vw;
+  max-width: 700px;
+  display: inline-block;
+  margin: auto auto -5px auto;
+}
+.board-selector {
+  float: left;
+  cursor: pointer;
+  width: 33.3%;
+}
+.board-selector input[type = "radio"] {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+}
+.board-selector div {
+  color: #AAAAAA;
+  background-color: #666666;
+  padding: 5px 5px;
+}
+.board-selector input[type = "radio"]:checked + div {
+  color: #f8f8f8;
+  background-color: #FF7900;
+}
+.board-selector:first-of-type div {
+  border-radius: 4px 0 0 0;
+  border-right: 1px solid rgba(0,0,0,0.2);
+}
+.board-selector:last-of-type div {
+  border-radius: 0 4px 0 0;
+  border-left: 1px solid rgba(0,0,0,0.2);
+}
+
+
 .leaderboard {
   box-sizing: border-box;
-  /*background: #C4C4C4;*/
-  /*position: sticky;*/
   font-family: 'Roboto Mono', monospace;
-  width: 347px;
-  /*height: 155px;*/
   border: 15px solid #FF7900;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
   width: 80vw;
   padding: 8px;
-  margin: 2px auto 50px auto;
+  margin: 0 auto 50px auto;
   max-width: 700px;
-/*  max-height: 70vh;*/
   /* Makes it look a bit like a black board */
   color: white;
   background-color: black;

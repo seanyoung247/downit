@@ -30,21 +30,23 @@
 <main>
   <div class="welcome-text">
     {% if player %}
-    <p>
-      Looks like you've had enough <span class="player-name">{{ player.name }}</span>.
-      You downed {{ (player.score / 5)|int }}
-      {{ 'pints' if ((player.score / 5)|int != 1) else 'pint' }}.
-      That puts you in {{ ordanlise(player.place) }} place overall.
-    </p>
-    <p>
-      Take a look where you are on the leaderboard on the way out of my pub...
-      and don't forget to share the fun!
-    </p>
+      {% set time = player.time %}
+      <p>
+        Looks like you've had enough <span class="player-name">{{ player.name }}</span>.
+        You downed {{ (player.score / 5)|int }}
+        {{ 'pints' if ((player.score / 5)|int != 1) else 'pint' }}.
+        That puts you in {{ ordanlise(player.place) }} place overall.
+      </p>
+      <p>
+        Take a look where you are on the leaderboard on the way out of my pub...
+        and don't forget to share the fun!
+      </p>
     {% else %}
-    <p>
-      Take a look at the leaderboard to see our top scorers. When you're done,
-      why not give it a try yourself?
-    </p>
+     {% set time = 60 %}
+      <p>
+        Take a look at the leaderboard to see our top scorers. When you're done,
+        why not give it a try yourself?
+      </p>
     {% endif %}
     <div class="social-share">
       <a href="https://instagram.com" target="_blank">
@@ -58,6 +60,7 @@
   {% if player %}
     <form id="quiz-player-form" action="{{ url_for('startgame') }}" method="POST">
       <input type="hidden" name="player_name" value="{{ player.name }}">
+      <input type="hidden" name="game_time" value="{{ player.time }}">
       <input class="restart-button btn" type="submit" value="Get another round in!">
     </form>
   {% else %}
@@ -65,44 +68,42 @@
       <a class="restart-button btn" href="{{ url_for('home') }}">Have a go!</a>
     </div>
   {% endif %}
-  <div id="time_selectors">
-    <label class="time-selector">
-      <input type="radio" name="game_time" value="60" checked>
-      <div>60s</div>
-    </label>
-    <label class="time-selector">
-      <input type="radio" name="game_time" value="90">
-      <div>90s</div>
-    </label>
-    <label class="time-selector">
-      <input type="radio" name="game_time" value="120">
-      <div>120s</div>
-    </label>
+  <div id="board_selectors">
+    {% for i in [60,90,120] %}
+      <label class="board-selector">
+        <input class="game-time" type="radio" name="game_time" value="{{ i }}"
+          {{ 'checked' if (time == i) else '' }}>
+        <div>{{ i }}s</div>
+      </label>
+    {% endfor %}
   </div>
-  <div class="leaderboard">
-    <h4>Top 10</h4>
-    <table class="leaderboard-table">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Name</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for entry in scores %}
-        {%- if player and player.id == entry._id -%}
-        <tr class="highlight">
-        {%- else -%}
-        <tr>
-        {%- endif -%}
-          <td>{{ loop.index }}</td>
-          <td>{{ entry.player }}</td>
-          <td>{{ entry.score }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  {% for score in scores %}
+    {% set score_time = (loop.index + 1) * 30 %}
+    <div id="leaderboard-{{ score_time }}" class="leaderboard {{ '' if (time == score_time) else 'hide' }}">
+      <h4>Top 10 - ({{ score_time }}s)</h4>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for entry in score %}
+          {%- if player and player.id == entry._id -%}
+          <tr class="highlight">
+          {%- else -%}
+          <tr>
+          {%- endif -%}
+            <td>{{ loop.index }}</td>
+            <td>{{ entry.player }}</td>
+            <td>{{ entry.score }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endfor %}
 </main>
 {% endblock %}
