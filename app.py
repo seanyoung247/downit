@@ -35,8 +35,9 @@ def dev_only(func):
 
 def game_time():
     """ Returns the length of a game in seconds """
-    #Game length in seconds
-    return 60;
+    if "game_length" not in session:
+        session["game_length"] = 60;
+    return session["game_length"];
 
 
 def get_question():
@@ -78,6 +79,7 @@ def startgame():
         session['player_score'] = 0
         session["game_start"] = time.time()
         session["game_started"] = True
+        session["game_length"] = int(request.form['game_time'])
 
     else:
         return abort(400)

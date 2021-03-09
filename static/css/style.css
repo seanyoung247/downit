@@ -50,7 +50,7 @@ main {
   width: 75vw;
   min-height: 50px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  margin: 10px auto;
+  margin: 1vh auto;
   border-radius: 5px;
   font-family: 'Roboto Mono', monospace;
   font-size: 15px;
@@ -64,7 +64,7 @@ main {
   font-family: 'Ribeye', cursive;
   font-size: 72px;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  margin: 1vh 0;
+  margin: 1vh 1vw;
 }
 
 .welcome-text {
@@ -72,7 +72,7 @@ main {
   width: 75vw;
   border-radius: 5px;
   padding: 10px;
-  margin: 10px auto;
+  margin: 1vh auto;
   /* Based on example here: https://lea.verou.me/2012/04/background-attachment-local/
      prevents the welcome text getting too large, and shows scroll bars and shadows
      if there is overflow. */
@@ -94,22 +94,54 @@ main {
 
 #quiz_player_form .player-name {
   display: block;
-  width: 275px;
-  height: 50px;
+  width: 267px;
+  height: 44px;
   background-color: #f9f9f9;
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-  margin: 20px auto;
+  margin: 1vh auto;
   border-radius: 5px;
   font-family: 'Roboto Mono', monospace;
   text-align: center;
   font-size: 22px;
   letter-spacing: 0.4em;
 }
+#time_selectors {
+  display: inline-block;
+  margin: auto;
+}
+#time_selectors > div {
+  float: left;
+  padding: 1px 5px;
+}
+.time-selector {
+  float: left;
+}
+.time-selector input[type = "radio"] {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+}
+.time-selector div {
+  width: 50px;
+  color: #AAAAAA;
+  background-color: #666666;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+.time-selector input[type = "radio"]:checked + div {
+  color: #f8f8f8;
+  background-color: #FF7900;
+}
+.time-selector:first-of-type div {
+  border-radius: 4px 0 0 4px;
+}
 
+.time-selector:last-of-type div {
+  border-radius: 0 4px 4px 0;
+}
 #quiz_player_form input[type = 'submit'] {
   width: 275px;
   height: 50px;
-
+  margin-bottom: 0;
   background-color: #FF7900;
 }
 
