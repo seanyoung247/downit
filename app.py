@@ -1,5 +1,6 @@
 import os
 import time
+import helpers
 from functools import wraps
 from flask import ( Flask, flash, render_template, redirect,
                     request, session, url_for, abort)
@@ -32,31 +33,15 @@ def dev_only(func):
     return route
 
 
-def get_question_list():
-    """ Returns the list of questions already asked. """
-    if "questions" not in session:
-        session["questions"] = []
-
-    id_list = []
-    for id in session["questions"]:
-        id_list.append(ObjectId(id))
-
-    return id_list
-
-
-def add_question_to_list(id):
-    """ Adds a question to the list of asked questions. Takes ObjectId. """
-    if "questions" not in session:
-        session["questions"] = []
-
-    tempList = session["questions"]
-    tempList.append(str(id))
-    session["questions"] = tempList
+def game_time():
+    """ Returns the length of a game in seconds """
+    #Game length in seconds
+    return 60;
 
 
 def get_question():
     #Get the list of questions already asked
-    question_list = get_question_list()
+    question_list = helpers.get_question_list(session)
 
     #Get the first question
     question = list(mongo.db.questions.aggregate([
@@ -71,52 +56,22 @@ def get_question():
         return redirect(url_for("gameover"))
 
     #Add the new question to the list
-    add_question_to_list(question[0]["_id"])
+    helpers.add_question_to_list(session, question[0]["_id"])
 
-    return question
-
-
-def get_score():
-    """ Returns the player's current score """
-    if "player_score" not in session:
-        session["player_score"] = 0
-
-    return session["player_score"]
-
-
-def inc_score():
-    """ Adds one to player score """
-    if "player_score" not in session:
-        session["player_score"] = 0
-
-    session["player_score"] += 1
-
-
-def clear_game_state():
-    """ Clears persistent game state variables """
-    session["player"] = ""
-    session["player_score"] = 0
-    session["game_start"] = 0
-    session["questions"] = []
-
-
-def game_time():
-    """ Returns the length of a game in seconds """
-    #Game length in seconds
-    return 60;
+    return question[0]
 
 
 @app.route("/")
 @app.route("/home")
 def home():
     """ Homepage route. """
-    clear_game_state()
+    helpers.clear_game_state(session)
     return render_template("home.html")
 
 
 @app.route("/startgame", methods=["POST"])
 def startgame():
-    clear_game_state()
+    helpers.clear_game_state(session)
 
     if 'player_name' in request.form:
         session['player'] = request.form['player_name']
@@ -143,7 +98,7 @@ def quiz():
 
     question = get_question()
 
-    return render_template("quiz.html", question = question[0], time_left=time_left)
+    return render_template("quiz.html", question = question, time_left=time_left)
 
 
 @app.route("/gameover")
@@ -177,7 +132,7 @@ def gameover():
     ]).limit(10)
 
     #clear session
-    clear_game_state()
+    helpers.clear_game_state(session)
 
     return render_template("leaderboard.html", scores=scores, player=player)
 
@@ -197,19 +152,19 @@ def AJAX_answer():
     }
     correct = False
 
-    question_list = get_question_list()
+    question_list = helpers.get_question_list(session)
     if "answer" in request.json:
         question = mongo.db.questions.find_one( {"_id" : ObjectId(question_list[-1])} )
         #Did the player get the right answer?
         if (question['answer'] == int(request.json['answer'])):
             correct = True
-            inc_score()
+            helpers.inc_score(session)
         response['correct_answer'] = question['answer']
         response['player_correct'] = correct
         response['player_score'] = session['player_score']
 
     #Get the next question
-    question = get_question()[0]
+    question = get_question()
 
     response["next_question"] = {
         "question" : question["question"],
