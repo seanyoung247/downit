@@ -76,7 +76,7 @@ main {
   /* Based on example here: https://lea.verou.me/2012/04/background-attachment-local/
      prevents the welcome text getting too large, and shows scroll bars and shadows
      if there is overflow. */
-  max-height: 50vh;
+  max-height: 45vh;
   overflow-y: auto;
   background:
     /* Shadow covers */
@@ -105,6 +105,13 @@ main {
   font-size: 22px;
   letter-spacing: 0.4em;
 }
+#quiz_player_form .form-label {
+  padding: 2px;
+  background-color: rgba(0, 154, 73, 0.9);
+  border-radius: 50px;
+  width: 175px;
+  margin:auto;
+}
 #time_selectors {
   display: inline-block;
   margin: auto;
@@ -115,6 +122,7 @@ main {
 }
 .time-selector {
   float: left;
+  cursor: pointer;
 }
 .time-selector input[type = "radio"] {
   position: fixed;
@@ -134,7 +142,6 @@ main {
 .time-selector:first-of-type div {
   border-radius: 4px 0 0 4px;
 }
-
 .time-selector:last-of-type div {
   border-radius: 0 4px 4px 0;
 }
@@ -260,7 +267,6 @@ main {
   top: 2vh;
   right: 5vw;
 }
-
 .sound-toggle input {
   position: absolute;
   clip: rect(0, 0, 0, 0);
@@ -269,7 +275,6 @@ main {
   border: 0;
   overflow: hidden;
 }
-
 .sound-toggle label {
   background-color: #666666;
   color: #AAAAAA;
@@ -282,11 +287,9 @@ main {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   transition: all 0.4s ease-in-out;
 }
-
 .sound-toggle label:hover {
   cursor: pointer;
 }
-
 .sound-toggle input:checked ~ label#sound-on {
   color: #f8f8f8;
   background-color: #FF7900;
@@ -295,11 +298,9 @@ main {
   color: #f8f8f8;
   background-color: #FF7900;
 }
-
 .sound-toggle label:first-of-type {
   border-radius: 4px 0 0 4px;
 }
-
 .sound-toggle label:last-of-type {
   border-radius: 0 4px 4px 0;
 }
@@ -332,7 +333,7 @@ main {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
   width: 80vw;
   padding: 8px;
-  margin: 15px auto 50px auto;
+  margin: 2px auto 50px auto;
   max-width: 700px;
 /*  max-height: 70vh;*/
   /* Makes it look a bit like a black board */

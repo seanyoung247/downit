@@ -23,18 +23,19 @@
   </div>
 
   <form id="quiz_player_form" action="{{ url_for('startgame') }}" method="POST">
+    <div class="form-label">Game length:</div>
     <div id="time_selectors">
       <label class="time-selector">
         <input type="radio" name="game_time" value="60" checked>
-        <div>60</div>
+        <div>60s</div>
       </label>
       <label class="time-selector">
         <input type="radio" name="game_time" value="90">
-        <div>90</div>
+        <div>90s</div>
       </label>
       <label class="time-selector">
         <input type="radio" name="game_time" value="120">
-        <div>120</div>
+        <div>120s</div>
       </label>
     </div>
     <input class="player-name" type="text" name="player_name" value="Your name" required>
