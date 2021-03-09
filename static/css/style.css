@@ -75,7 +75,7 @@ main {
   margin: 10px auto;
   /* Based on example here: https://lea.verou.me/2012/04/background-attachment-local/
      prevents the welcome text getting too large, and shows scroll bars and shadows
-     if there is overflow*/
+     if there is overflow. */
   max-height: 50vh;
   overflow-y: auto;
   background:

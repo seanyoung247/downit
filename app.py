@@ -77,6 +77,7 @@ def startgame():
         session['player'] = request.form['player_name']
         session['player_score'] = 0
         session["game_start"] = time.time()
+        session["game_started"] = True
 
     else:
         return abort(400)
@@ -87,11 +88,14 @@ def startgame():
 @app.route("/quiz")
 def quiz():
     """ Quiz page route. """
+
+    if "game_started" not in session or not session["game_started"]:
+        return redirect("home")
     #Calculate game time remaining
     time_left = game_time() - (time.time() - session["game_start"])
     #If game time has expired, force gameover
     if time_left <= 0:
-        redirect(url_for("gameover"))
+        return redirect(url_for("gameover"))
 
     if 'sound' not in session:
         session['sound'] = True
@@ -106,6 +110,7 @@ def quiz():
 def gameover():
     """ Called when the game ends. """
     player = {}
+    session["game_started"] = False;
 
     if 'player' in session and session['player']:
         if session['player_score'] > 0:
@@ -143,7 +148,7 @@ def AJAX_answer():
     #Check that the game time hasn't elapsed
     time_left = game_time() - (time.time() - session["game_start"])
     if time_left <= 0:
-        redirect(url_for("gameover"))
+        return redirect(url_for("gameover"))
 
     response = {
         "correct_answer" : -1,
