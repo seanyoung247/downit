@@ -92,11 +92,11 @@ def quiz():
     """ Quiz page route. """
 
     if "game_started" not in session or not session["game_started"]:
-        return redirect("home")
+        return redirect(url_for("gameover"))
     #Calculate game time remaining
     time_left = game_time() - (time.time() - session["game_start"])
     #If game time has expired, force gameover
-    if time_left <= 0:
+    if time_left <= 0 and session["game_started"]:
         return redirect(url_for("gameover"))
 
     if 'sound' not in session:
@@ -107,36 +107,40 @@ def quiz():
     return render_template("quiz.html", question = question, time_left=time_left)
 
 
-@app.route("/gameover")
 @app.route("/leaderboard")
 def gameover():
     """ Called when the game ends. """
     player = {}
-    session["game_started"] = False;
 
     if 'player' in session and session['player']:
         if session['player_score'] > 0:
             #Store the player's score
-            id = mongo.db.scores.insert_one({
-                "player" : session["player"],
-                "score" : session["player_score"],
-                "time" : game_time()
-            })
+            if session["game_started"]:
+                id = mongo.db.scores.insert_one({
+                    "player" : session["player"],
+                    "score" : session["player_score"],
+                    "time" : game_time()
+                })
+            session["game_started"] = False;
             #Where did the player place in the database?
             position = mongo.db.scores.count_documents({
-                "score" : {"$gte":session["player_score"]}
+                "score" : {"$gte":session["player_score"]},
+                "time"  : game_time()
             })
             player = {
                 "name" : session['player'],
                 "score" : session['player_score'],
                 "place" : position,
+                "time" : game_time(),
                 "id" : id.inserted_id
             }
 
-    scores = mongo.db.scores.find().sort([
-        ("score", -1),
-        ("_id", 1)
-    ]).limit(10)
+    scores = []
+    for time in [60,90,120]:
+        scores.append(mongo.db.scores.find({"time" : time}).sort([
+            ("score", -1),
+            ("_id", 1),
+        ]).limit(10))
 
     #clear session
     helpers.clear_game_state(session)
@@ -147,17 +151,18 @@ def gameover():
 @app.route("/AJAX_answer", methods=["POST"])
 def AJAX_answer():
     """ Accepts an answer as an ajax request and returns if it is correct. """
-    #Check that the game time hasn't elapsed
-    time_left = game_time() - (time.time() - session["game_start"])
-    if time_left <= 0:
-        return redirect(url_for("gameover"))
-
     response = {
         "correct_answer" : -1,
         "player_correct" : False,
-        "player_score" : -1
+        "player_score" : -1,
+        "game_finished" : False
     }
     correct = False
+
+    #Check that the game time hasn't elapsed
+    time_left = game_time() - (time.time() - session["game_start"])
+    if time_left <= 0 and session["game_started"]:
+        response['game_finished'] = True
 
     question_list = helpers.get_question_list(session)
     if "answer" in request.json:
